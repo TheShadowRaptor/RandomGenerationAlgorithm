@@ -331,12 +331,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8d02ab3ed0a5494da601c0497f0bd7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blockMaxPosX: 60
-  blockMaxPosZ: 60
-  blockMaxPosY: 20
+  blockMaxPosX: 40
+  blockMaxPosZ: 40
+  blockMaxPosY: 10
   blockMinPosY: 1
-  mapBorderSize: 8
-  emptySpaceWeight: 5
+  mapBorderSize: 1
+  emptySpaceWeight: 1
+  smoothHeightToCenter: 0
+  smoothHeightToBorder: 1
+  smoothHeightToInnerComplex: 0
   amplitude: 5
   frequency: 5
   perlinNoise: {fileID: 1662880362}
