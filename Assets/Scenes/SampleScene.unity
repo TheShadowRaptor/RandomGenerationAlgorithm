@@ -344,6 +344,12 @@ MonoBehaviour:
   generationStyleBigOuter: 0
   generationStyleInnerComplex: 0
   genertaing: 1
+  floorColor: {r: 0, g: 1, b: 0, a: 1}
+  baseBuildingColor: {r: 1, g: 1, b: 1, a: 1}
+  topBuildingColor: {r: 0, g: 0.4097159, b: 1, a: 1}
+  middleBuildingColor: {r: 1, g: 0.89685977, b: 0, a: 1}
+  lowerBuildingColor: {r: 1, g: 0.05406789, b: 0, a: 1}
+  roadColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!4 &1662880361
 Transform:
   m_ObjectHideFlags: 0

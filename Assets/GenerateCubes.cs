@@ -30,7 +30,10 @@ public class GenerateCubes : MonoBehaviour
 
     [Header("Color")]
     public Color floorColor = Color.green;
-    public Color buildingColor = Color.white;
+    public Color baseBuildingColor = Color.white;
+    public Color topBuildingColor = Color.white;
+    public Color middleBuildingColor = Color.white;
+    public Color lowerBuildingColor = Color.white;
     public Color roadColor = Color.black;
 
     List<int> roadSizesZ = new List<int>();
@@ -73,7 +76,7 @@ public class GenerateCubes : MonoBehaviour
                             {
                                 for (int y = 0; y <= GenerationStyle(currentBlockHeight, x, z); y++)
                                 {
-                                    CreateFullSpace(x, y, z, buildingColor);
+                                    CreateFullSpace(x, y, z, baseBuildingColor);
                                 }
                             }
 
@@ -283,9 +286,24 @@ public class GenerateCubes : MonoBehaviour
         Cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         Cube.GetComponent<Renderer>().material.color = color;
         Cube.transform.position = localPosition;
+
+        // Color Buildings
         if (y == 0 && Cube.GetComponent<Renderer>().material.color != roadColor)
         {
             Cube.GetComponent<Renderer>().material.color = floorColor;
+        }
+        if (y <= blockMaxPosY / 2 && Cube.GetComponent<Renderer>().material.color != roadColor && Cube.GetComponent<Renderer>().material.color != floorColor)
+        {
+            Cube.GetComponent<Renderer>().material.color = lowerBuildingColor;
+        }
+        //half Height
+        if (y >= blockMaxPosY / 2)
+        {
+            Cube.GetComponent<Renderer>().material.color = middleBuildingColor;
+        }
+        if (y == blockMaxPosY - 1)
+        {
+            Cube.GetComponent<Renderer>().material.color = topBuildingColor;
         }
     }
 }
