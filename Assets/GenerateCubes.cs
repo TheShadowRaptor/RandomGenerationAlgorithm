@@ -18,18 +18,26 @@ public class GenerateCubes : MonoBehaviour
     private int emptySpaceAmount;
 
     [Header("Customization")]
-    public bool smoothHeightToCenter = true;
-    public bool smoothHeightToBorder = true;
-    public bool smoothHeightToInnerComplex = true;
+    public List<int> roadsZ = new List<int>();
+    public List<int> roadsX = new List<int>();
+    public int roadSize = 3;
 
-    [Header("PerlinNoise")]
-    [Range(0, 10)][SerializeField] float amplitude = 5.0f;
-    [Range(0, 10)][SerializeField] float frequency = 5.0f;
+    public bool generationStyleBigCenter = true;
+    public bool generationStyleBigOuter = true;
+    public bool generationStyleInnerComplex = true;
 
-    public PerlinNoise perlinNoise;
     public bool genertaing = true;
 
+    [Header("Color")]
+    public Color floorColor = Color.green;
+    public Color buildingColor = Color.white;
+    public Color roadColor = Color.black;
+
+    List<int> roadSizesZ = new List<int>();
+    List<int> roadSizesX = new List<int>();
+
     GameObject Cube;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -46,43 +54,64 @@ public class GenerateCubes : MonoBehaviour
     {
         if (genertaing)
         {
+            RandomizeRoads();
             for (int x = 0; x <= blockMaxPosX; x++)
             {
                 for (int z = 0; z <= blockMaxPosZ; z++)
                 {
-                    emptySpaceAmount = Random.Range(0, emptySpaceWeight);
-
-                    Vector3 localPosition = new Vector3(x, 0, z);
-                    int currentBlockHeight = Random.Range(blockMinPosY, blockMaxPosY);
-
-                    // Will fill space or leave it blank
-                    if (emptySpaceAmount > 0 || x < mapBorderSize || z < mapBorderSize ||
-                    x > blockMaxPosX - mapBorderSize || z > blockMaxPosZ - mapBorderSize)
+                    if (RoadGenerationX(x) == false)
                     {
-                        Cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        Cube.transform.position = localPosition;
-                        Debug.Log("EmptySpace");
-                        Debug.Log(emptySpaceAmount);
-                    }
-
-                    else
-                    {
-                        for (int y = 0; y <= GradualHeightSmoothing(currentBlockHeight, x, z); y++)
+                        if (RoadGenerationZ(z) == false)
                         {
-                            localPosition.y = y;
-                            Cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                            Cube.transform.position = localPosition;
-                            Debug.Log("NotEmptySpace");
-                            Debug.Log(emptySpaceAmount);
+                            emptySpaceAmount = Random.Range(0, emptySpaceWeight);
+
+                            Vector3 localPosition = new Vector3(x, 0, z);
+                            int currentBlockHeight = Random.Range(blockMinPosY, blockMaxPosY);
+
+                            // Will fill space or leave it blank
+                            if (OnMapBorder(x, 0, z) == false)
+                            {
+                                for (int y = 0; y <= GenerationStyle(currentBlockHeight, x, z); y++)
+                                {
+                                    CreateFullSpace(x, y, z, buildingColor);
+                                }
+                            }
+
+                            else
+                            {                              
+                                CreateEmptySpace(x, 0, z, floorColor);                               
+                            }
+                        }
+                        else
+                        {
+                            if (OnMapBorder(x, 0, z) == false)
+                            {
+                                CreateFullSpace(x, 0, z, roadColor);
+                            }
+                            else
+                            {
+                                CreateEmptySpace(x, 0, z, floorColor);
+                            }
                         }
                     }
-                }
+                    else
+                    {
+                        if (OnMapBorder(x, 0, z) == false)
+                        {
+                            CreateFullSpace(x, 0, z, roadColor);
+                        }
+                        else
+                        {
+                            CreateEmptySpace(x, 0, z, floorColor);
+                        }
+                    }
+                }               
             }
             genertaing = false;
         }
     }
 
-    float GradualHeightSmoothing(float currentBlockHeight, int x, int z)
+    float GenerationStyle(float currentBlockHeight, int x, int z)
     {
         int currentBlockPosX = x;
         int currentBlockPosZ = z;
@@ -90,7 +119,7 @@ public class GenerateCubes : MonoBehaviour
         int blockMiddlePosX = blockMaxPosX / 2;
         int blockMiddlePosZ = blockMaxPosZ / 2;
 
-        if (smoothHeightToCenter)
+        if (generationStyleBigCenter)
         {
 
             if (currentBlockPosX < blockMiddlePosX / 3 || currentBlockPosZ < blockMiddlePosZ / 3 ||
@@ -112,7 +141,7 @@ public class GenerateCubes : MonoBehaviour
             }
         }
 
-        if (smoothHeightToBorder)
+        if (generationStyleBigOuter)
         {
             if (currentBlockPosX < blockMiddlePosX / 3 || currentBlockPosZ < blockMiddlePosZ / 3 ||
                 currentBlockPosX > blockMiddlePosX * 3.5f / 2 || currentBlockPosZ > blockMiddlePosZ * 3.5f / 2)
@@ -138,7 +167,7 @@ public class GenerateCubes : MonoBehaviour
             }
         }
 
-        if (smoothHeightToInnerComplex)
+        if (generationStyleInnerComplex)
         {
             if (currentBlockPosX < blockMiddlePosX / 3 || currentBlockPosZ < blockMiddlePosZ / 3 ||
                currentBlockPosX > blockMiddlePosX * 3.5f / 2 || currentBlockPosZ > blockMiddlePosZ * 3.5f / 2)
@@ -164,5 +193,99 @@ public class GenerateCubes : MonoBehaviour
             }
         }
         return currentBlockHeight;
+    }
+    bool OnMapBorder(int x, int y, int z)
+    {
+        if (emptySpaceAmount > 0 
+        || x < mapBorderSize || z < mapBorderSize 
+        ||  x > blockMaxPosX - mapBorderSize || z > blockMaxPosZ - mapBorderSize)
+        {
+            return true;
+        }
+        return false;
+    }
+    bool RoadGenerationX(float currentX)
+    {
+        for (int i = 0; i < roadSizesX.Count; i++)
+        {
+            if (currentX == roadSizesX[i])
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    bool RoadGenerationZ(float currentZ)
+    {
+        for (int i = 0; i < roadSizesZ.Count; i++)
+        {
+            if (currentZ == roadSizesZ[i])
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    void RandomizeRoads()
+    {
+        // RoadsX generation
+        for (int i = 0; i < roadsX.Count; i++)
+        {
+            roadsX[i] = Random.Range(0, blockMaxPosX);
+
+            for (int b = 0; b < roadsX.Count; b++)
+            {
+                if (roadsX[i] == roadsX[b])
+                {
+                    roadsX[i] = Random.Range(0, blockMaxPosX);
+                }
+            }
+
+            for (int b = 0; b < roadSize; b++)
+            {
+                roadSizesX.Add(roadsX[i] += 1);
+
+            }
+        }
+
+        // Roads Z generation
+        for (int i = 0; i < roadsZ.Count; i++)
+        {
+            roadsZ[i] = Random.Range(0, blockMaxPosZ);
+
+            for (int b = 0; b < roadsZ.Count; b++)
+            {
+                if (roadsZ[i] == roadsZ[b])
+                {
+                    roadsZ[i] = Random.Range(0, blockMaxPosZ);
+                }
+            }
+
+            for (int b = 0; b < roadSize; b++)
+            {
+                roadSizesZ.Add(roadsZ[i] += 1);
+
+            }
+        }
+    }
+    void CreateEmptySpace(int x, int y, int z, Color color)
+    {
+        // empty space
+        Vector3 localPosition = new Vector3(x, 0, z);
+        Cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        Cube.GetComponent<Renderer>().material.color = color;
+        Cube.transform.position = localPosition;
+    }
+    void CreateFullSpace(int x, int y, int z, Color color)
+    {
+        // full space
+        Vector3 localPosition = new Vector3(x, y, z);
+        Cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        Cube.GetComponent<Renderer>().material.color = color;
+        Cube.transform.position = localPosition;
+        if (y == 0 && Cube.GetComponent<Renderer>().material.color != roadColor)
+        {
+            Cube.GetComponent<Renderer>().material.color = floorColor;
+        }
     }
 }

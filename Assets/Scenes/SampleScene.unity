@@ -337,12 +337,12 @@ MonoBehaviour:
   blockMinPosY: 1
   mapBorderSize: 1
   emptySpaceWeight: 1
-  smoothHeightToCenter: 0
-  smoothHeightToBorder: 1
-  smoothHeightToInnerComplex: 0
-  amplitude: 5
-  frequency: 5
-  perlinNoise: {fileID: 1662880362}
+  roadsZ: 000000000000000000000000
+  roadsX: 000000000000000000000000
+  roadSize: 3
+  generationStyleBigCenter: 1
+  generationStyleBigOuter: 0
+  generationStyleInnerComplex: 0
   genertaing: 1
 --- !u!4 &1662880361
 Transform:
