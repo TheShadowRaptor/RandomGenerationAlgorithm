@@ -79,7 +79,6 @@ public class GenerateCubes : MonoBehaviour
                                     CreateFullSpace(x, y, z, baseBuildingColor);
                                 }
                             }
-
                             else
                             {                              
                                 CreateEmptySpace(x, 0, z, floorColor);                               
@@ -87,26 +86,12 @@ public class GenerateCubes : MonoBehaviour
                         }
                         else
                         {
-                            if (OnMapBorder(x, 0, z) == false)
-                            {
-                                CreateFullSpace(x, 0, z, roadColor);
-                            }
-                            else
-                            {
-                                CreateEmptySpace(x, 0, z, floorColor);
-                            }
+                            CreateFullSpace(x, 0, z, roadColor);       
                         }
                     }
                     else
                     {
-                        if (OnMapBorder(x, 0, z) == false)
-                        {
-                            CreateFullSpace(x, 0, z, roadColor);
-                        }
-                        else
-                        {
-                            CreateEmptySpace(x, 0, z, floorColor);
-                        }
+                        CreateFullSpace(x, 0, z, roadColor);    
                     }
                 }               
             }
