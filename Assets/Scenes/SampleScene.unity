@@ -336,7 +336,7 @@ MonoBehaviour:
   blockMaxPosY: 10
   blockMinPosY: 1
   mapBorderSize: 1
-  emptySpaceWeight: 1
+  emptySpaceWeight: 5
   roadsZ: 000000000000000000000000
   roadsX: 000000000000000000000000
   roadSize: 3
